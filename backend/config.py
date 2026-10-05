@@ -14,7 +14,11 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 class Settings(BaseSettings):
     """Runtime settings for the retrieval API."""
 
-    model_config = SettingsConfigDict(env_file=".env", env_file_encoding="utf-8")
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        extra="ignore",
+    )
 
     chroma_path: Path = Field(default=PROJECT_ROOT / "data" / "chroma")
     chroma_collection: str = "mycall_voice_quality"
