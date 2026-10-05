@@ -23,7 +23,10 @@ class Settings(BaseSettings):
     )
     embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
     ollama_base_url: str = "http://localhost:11434"
-    ollama_model: str = "mistral:7b-instruct-q4_K_M"
+    ollama_model: str = "llama3.2:3b-instruct-q4_K_M"
     ollama_temperature: float = Field(default=0.1, ge=0.0, le=1.0)
-    default_top_k: int = Field(default=5, ge=1, le=10)
+    ollama_keep_alive: str = "10m"
+    ollama_num_predict: int = Field(default=180, ge=64, le=512)
+    ollama_num_ctx: int = Field(default=2048, ge=512, le=8192)
+    default_top_k: int = Field(default=3, ge=1, le=10)
     max_top_k: int = Field(default=10, ge=1, le=20)

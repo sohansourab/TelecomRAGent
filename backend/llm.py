@@ -22,6 +22,9 @@ class OllamaReasoner:
             base_url=settings.ollama_base_url,
             model=settings.ollama_model,
             temperature=settings.ollama_temperature,
+            keep_alive=settings.ollama_keep_alive,
+            num_predict=settings.ollama_num_predict,
+            num_ctx=settings.ollama_num_ctx,
         )
 
     def generate_report(
@@ -33,9 +36,9 @@ class OllamaReasoner:
     ) -> str:
         """Ask Ollama for concise report prose, returning fallback on any failure."""
         prompt = (
-            "You are a telecom network operations analyst. Use only the supplied evidence. "
-            "Do not invent metrics, locations, or causes. Return a concise report with "
-            "sections: Finding, Evidence, Recommended actions.\n\n"
+            "You are a telecom operations analyst. Use only supplied evidence. "
+            "Do not invent facts. Return at most 120 words with headings "
+            "Finding, Evidence, Recommended actions.\n\n"
             f"Question: {question}\n"
             f"Root-cause evidence: {root_cause}\n"
             f"Resolution actions: {resolution}"
