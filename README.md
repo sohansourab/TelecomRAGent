@@ -30,8 +30,11 @@ The selected MyCall data is released under India's National Data Sharing and Acc
 cd CallDropAI
 uv venv .venv --python 3.12
 source .venv/bin/activate
+uv pip install --python .venv/bin/python --index-url https://download.pytorch.org/whl/cpu torch torchvision
 uv pip install --python .venv/bin/python -r requirements.txt
 ```
+
+Install CPU-only Torch first on machines where the GPU is tight. If the full requirements command runs first, the resolver may select several hundred megabytes of CUDA libraries.
 
 Install and start Ollama, then pull the configured model:
 
