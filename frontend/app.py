@@ -9,7 +9,9 @@ import requests
 import streamlit as st
 
 
-BACKEND_URL = os.getenv("BACKEND_URL", "http://127.0.0.1:8000").rstrip("/")
+BACKEND_URL = str(
+    st.secrets.get("BACKEND_URL", os.getenv("BACKEND_URL", "http://127.0.0.1:8000"))
+).rstrip("/")
 REQUEST_TIMEOUT_SECONDS = 180
 
 
@@ -21,35 +23,34 @@ def inject_styles() -> None:
         @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
 
         :root {
-            --ink: #12212b;
-            --muted: #64747d;
-            --line: #dce5e5;
-            --paper: #f5f8f7;
+            --ink: #171717;
+            --muted: #6b6b6b;
+            --line: #dddddd;
+            --paper: #f3f3f1;
             --panel: #ffffff;
-            --navy: #102b3a;
-            --teal: #0d8f88;
-            --teal-soft: #dff4f0;
-            --amber: #e49a37;
+            --charcoal: #202020;
+            --accent: #505050;
+            --soft: #e9e9e7;
         }
 
         html, body, [class*="css"] { font-family: 'DM Sans', sans-serif; }
         .stApp { background: var(--paper); color: var(--ink); }
         [data-testid="stHeader"] { background: transparent; }
-        [data-testid="stSidebar"] { background: var(--navy); border-right: 0; }
-        [data-testid="stSidebar"] * { color: #eaf4f2; }
-        [data-testid="stSidebar"] .stCaption { color: #a9c3c3; }
+        [data-testid="stSidebar"] { background: var(--charcoal); border-right: 0; }
+        [data-testid="stSidebar"] * { color: #eeeeee; }
+        [data-testid="stSidebar"] .stCaption { color: #a7a7a7; }
         [data-testid="stSidebar"] [data-testid="stMetricValue"] { color: #ffffff; }
-        [data-testid="stSidebar"] [data-testid="stMetricLabel"] { color: #a9c3c3; }
+        [data-testid="stSidebar"] [data-testid="stMetricLabel"] { color: #a7a7a7; }
         [data-testid="stSidebar"] hr { border-color: rgba(255,255,255,.14); }
         .block-container { max-width: 1180px; padding: 2.2rem 3rem 5rem; }
         h1, h2, h3 { font-family: 'Space Grotesk', sans-serif; letter-spacing: 0; color: var(--ink); }
         h1 { font-size: 2.45rem !important; line-height: 1.08 !important; margin-bottom: .35rem !important; }
-        .eyebrow { color: var(--teal); font-size: .73rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+        .eyebrow { color: var(--accent); font-size: .73rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
         .subhead { color: var(--muted); font-size: 1rem; margin-bottom: 1.6rem; }
-        .hero { background: linear-gradient(115deg, #102b3a 0%, #164b55 70%, #117b76 100%); border-radius: 16px; padding: 1.45rem 1.65rem; color: white; margin: .4rem 0 1.4rem; box-shadow: 0 14px 35px rgba(16,43,58,.14); }
-        .hero .eyebrow { color: #86e5d5; }
+        .hero { background: linear-gradient(115deg, #202020 0%, #373737 70%, #555555 100%); border-radius: 16px; padding: 1.45rem 1.65rem; color: white; margin: .4rem 0 1.4rem; box-shadow: 0 14px 35px rgba(0,0,0,.14); }
+        .hero .eyebrow { color: #d0d0d0; }
         .hero h2 { color: white; font-size: 1.35rem; margin: .2rem 0 .35rem; }
-        .hero p { color: #d3e7e4; margin: 0; font-size: .92rem; }
+        .hero p { color: #d2d2d2; margin: 0; font-size: .92rem; }
         .kpi { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: .9rem 1rem; min-height: 94px; }
         .kpi-label { color: var(--muted); font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; font-weight: 700; }
         .kpi-value { color: var(--ink); font-family: 'Space Grotesk', sans-serif; font-size: 1.6rem; font-weight: 700; margin-top: .3rem; }
@@ -57,13 +58,14 @@ def inject_styles() -> None:
         [data-testid="stChatMessage"] { border: 0; padding: .8rem 0; }
         [data-testid="stChatMessage"] [data-testid="stMarkdownContainer"] { line-height: 1.65; }
         [data-testid="stChatMessage"]:has([data-testid="chatAvatarIcon-assistant"]) { background: white; border: 1px solid var(--line); border-radius: 14px; padding: 1.05rem 1.2rem; margin: .55rem 0 1rem; }
-        [data-testid="stChatInput"] { border-color: #9dc9c5; box-shadow: 0 7px 20px rgba(13,143,136,.08); }
+        [data-testid="stChatInput"] { border-color: #a5a5a5; box-shadow: 0 7px 20px rgba(0,0,0,.07); }
         [data-testid="stExpander"] { border: 1px solid var(--line); border-radius: 10px; background: rgba(255,255,255,.7); }
-        .source-row { border-left: 3px solid var(--teal); background: #f7fbfa; border-radius: 0 8px 8px 0; padding: .75rem .9rem; margin: .55rem 0; }
+        .source-row { border-left: 3px solid #707070; background: #f8f8f7; border-radius: 0 8px 8px 0; padding: .75rem .9rem; margin: .55rem 0; }
         .source-meta { color: var(--muted); font-size: .76rem; margin-top: .35rem; }
-        .status-pill { display: inline-block; border-radius: 99px; background: var(--teal-soft); color: #086e69; font-size: .72rem; font-weight: 700; padding: .3rem .65rem; }
-        .stButton > button, .stDownloadButton > button { border-radius: 8px; border: 1px solid #b8d3d1; color: #086e69; background: white; font-weight: 600; }
-        .stButton > button:hover, .stDownloadButton > button:hover { border-color: var(--teal); color: var(--teal); }
+        .status-pill { display: inline-block; border-radius: 99px; background: var(--soft); color: #222222; font-size: .72rem; font-weight: 700; padding: .3rem .65rem; }
+        .stSlider [role="slider"] { background: #d0d0d0; }
+        .stButton > button, .stDownloadButton > button { border-radius: 8px; border: 1px solid #bcbcbc; color: #303030; background: white; font-weight: 600; }
+        .stButton > button:hover, .stDownloadButton > button:hover { border-color: #4a4a4a; color: #111111; }
         </style>
         """,
         unsafe_allow_html=True,
